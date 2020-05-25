@@ -2,15 +2,19 @@ import curses
 
 from conway import game
 
+FULL_SCREEN_WIDTH_PADDING = 4
+FULL_SCREEN_HEIGHT_PADDING = 2
+
 
 class TerminalView(object):
 
-    def __init__(self, gol) -> None:
+    def __init__(self, gol, update_interval=500) -> None:
         super().__init__()
         self.gol = gol
         self.screen = None
         self.x_offset = 0
         self.y_offset = 0
+        self.update_interval = update_interval
 
     def run(self):
         self.screen = curses.initscr()
@@ -44,7 +48,7 @@ class TerminalView(object):
                     self._display_glyph(x, y)
             self.screen.refresh()
             self.gol.step()
-            curses.napms(100)
+            curses.napms(self.update_interval)
 
     def _display_glyph(self, x, y):
         z = self.gol.grid[y, x]
@@ -77,3 +81,13 @@ class TerminalView(object):
         for y in range(num_rows - 1):
             for x in range(num_cols - 1):
                 self.screen.addstr(y, x, ' ', curses.color_pair(1))
+
+
+def full_screen_sizes():
+    screen = curses.initscr()
+    num_rows, num_cols = screen.getmaxyx()
+
+    full_rows = num_rows - (2 * FULL_SCREEN_HEIGHT_PADDING)
+    full_cols = num_cols - (2 * FULL_SCREEN_WIDTH_PADDING)
+
+    return full_rows, full_cols
