@@ -11,15 +11,16 @@ class TerminalView(object):
     def __init__(self, gol, update_interval=500) -> None:
         super().__init__()
         self.gol = gol
-        self.screen = None
-        self.x_offset = 0
-        self.y_offset = 0
         self.update_interval = update_interval
 
+        self._screen = None
+        self._x_offset = 0
+        self._y_offset = 0
+
     def run(self):
-        self.screen = curses.initscr()
-        self.screen.clear()
-        self.screen.refresh()
+        self._screen = curses.initscr()
+        self._screen.clear()
+        self._screen.refresh()
 
         # Color setup
         curses.start_color()
@@ -47,7 +48,7 @@ class TerminalView(object):
                 for x in range(self.gol.width):
                     self._display_glyph(x, y)
             self._display_status()
-            self.screen.refresh()
+            self._screen.refresh()
             self.gol.step()
             curses.napms(self.update_interval)
 
@@ -67,25 +68,25 @@ class TerminalView(object):
             glyph = ' '
             color = curses.color_pair(1)
 
-        self.screen.addstr(y + self.y_offset, x + self.x_offset,
-                           glyph, color)
+        self._screen.addstr(y + self._y_offset, x + self._x_offset,
+                            glyph, color)
 
     def _display_status(self):
         status = 'Step: %d' % self.gol.step_count
-        self.screen.addstr((self.gol.height + self.y_offset + 1), self.x_offset, status)
+        self._screen.addstr((self.gol.height + self._y_offset + 1), self._x_offset, status)
 
     def _calculate_offsets(self):
-        num_rows, num_cols = self.screen.getmaxyx()
+        num_rows, num_cols = self._screen.getmaxyx()
 
-        self.x_offset = int((num_cols - self.gol.width) / 2) - 1
-        self.y_offset = int((num_rows - self.gol.height) / 2) - 1
+        self._x_offset = int((num_cols - self.gol.width) / 2) - 1
+        self._y_offset = int((num_rows - self.gol.height) / 2) - 1
 
     def _flush_terminal(self):
         """Fill the terminal with empty spaces to initialize the canvas"""
-        num_rows, num_cols = self.screen.getmaxyx()
+        num_rows, num_cols = self._screen.getmaxyx()
         for y in range(num_rows - 1):
             for x in range(num_cols - 1):
-                self.screen.addstr(y, x, ' ', curses.color_pair(1))
+                self._screen.addstr(y, x, ' ', curses.color_pair(1))
 
 
 def full_screen_sizes():
