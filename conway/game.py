@@ -26,7 +26,7 @@ class GameOfLife(object):
 
     @property
     def step_count(self):
-        return self.step_count
+        return self._step_count
 
     def step(self):
         new_grid = self.grid.copy()

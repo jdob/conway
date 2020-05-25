@@ -3,7 +3,7 @@ import curses
 from conway import game
 
 FULL_SCREEN_WIDTH_PADDING = 4
-FULL_SCREEN_HEIGHT_PADDING = 2
+FULL_SCREEN_HEIGHT_PADDING = 4
 
 
 class TerminalView(object):
@@ -46,6 +46,7 @@ class TerminalView(object):
             for y in range(self.gol.height):
                 for x in range(self.gol.width):
                     self._display_glyph(x, y)
+            self._display_status()
             self.screen.refresh()
             self.gol.step()
             curses.napms(self.update_interval)
@@ -68,6 +69,10 @@ class TerminalView(object):
 
         self.screen.addstr(y + self.y_offset, x + self.x_offset,
                            glyph, color)
+
+    def _display_status(self):
+        status = 'Step: %d' % self.gol.step_count
+        self.screen.addstr((self.gol.height + self.y_offset + 1), self.x_offset, status)
 
     def _calculate_offsets(self):
         num_rows, num_cols = self.screen.getmaxyx()
