@@ -35,17 +35,16 @@ class TerminalView(object):
         curses.endwin()
 
     def _run_game(self):
-        n = len(self.gol.grid)
         while True:
-            for x in range(n):
-                for y in range(n):
+            for y in range(self.gol.height):
+                for x in range(self.gol.width):
                     self._display_glyph(x, y)
             self.screen.refresh()
             self.gol.step()
             curses.napms(100)
 
     def _display_glyph(self, x, y):
-        z = self.gol.grid[x, y]
+        z = self.gol.grid[y, x]
         if z == game.ON:
             self.screen.addstr(y + self.y_offset, x + self.x_offset,
                                'o', curses.color_pair(1) | curses.A_BOLD)
@@ -56,5 +55,5 @@ class TerminalView(object):
     def _calculate_offsets(self):
         num_rows, num_cols = self.screen.getmaxyx()
 
-        self.x_offset = int((num_cols - len(self.gol.grid)) / 2) - 1
-        self.y_offset = int((num_rows - len(self.gol.grid)) / 2) - 1
+        self.x_offset = int((num_cols - self.gol.width) / 2) - 1
+        self.y_offset = int((num_rows - self.gol.height) / 2) - 1
