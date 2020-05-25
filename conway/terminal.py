@@ -53,7 +53,7 @@ class TerminalView(object):
             curses.napms(self.update_interval)
 
     def _display_glyph(self, x, y):
-        z = self.gol.grid[y, x]
+        z = self.gol.value(x, y)
 
         if z == game.ALIVE:
             glyph = 'o'

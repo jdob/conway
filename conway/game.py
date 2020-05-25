@@ -10,10 +10,10 @@ class GameOfLife(object):
 
     def __init__(self, starting_grid) -> None:
         super().__init__()
-        self.grid = starting_grid.copy()
 
-        self._width = len(self.grid[0])
-        self._height = len(self.grid)
+        self._grid = starting_grid.copy()
+        self._width = len(self._grid[0])
+        self._height = len(self._grid)
         self._step_count = 0
 
     @property
@@ -28,13 +28,16 @@ class GameOfLife(object):
     def step_count(self):
         return self._step_count
 
+    def value(self, x, y):
+        return self._grid[y, x]
+
     def step(self):
-        new_grid = self.grid.copy()
+        new_grid = self._grid.copy()
 
         for y in range(self._height):
             for x in range(self._width):
                 neighbors = self._count_neighbors(x, y)
-                current = self.grid[y, x]
+                current = self._grid[y, x]
 
                 # At this iteration, treat these as alive or dead
                 if current == NEW:
@@ -52,13 +55,13 @@ class GameOfLife(object):
                         new_grid[y, x] = NEW
 
         self._step_count += 1
-        self.grid[:] = new_grid[:]
+        self._grid[:] = new_grid[:]
 
     def print_grid(self):
         for y in range(self._height):
             row = ''
             for x in range(self._width):
-                row += '%d ' % self.grid[y, x]
+                row += '%d ' % self._grid[y, x]
             print(row)
 
     @staticmethod
@@ -71,7 +74,7 @@ class GameOfLife(object):
 
     def _count_neighbors(self, x, y):
         def value_of(vy, vx):
-            z = self.grid[vy, vx]
+            z = self._grid[vy, vx]
             if self.is_on(z):
                 return 1
             else:
