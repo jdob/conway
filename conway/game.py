@@ -14,7 +14,11 @@ class GameOfLife(object):
         self._grid = starting_grid.copy()
         self._width = len(self._grid[0])
         self._height = len(self._grid)
+
         self._step_count = 0
+        self._current_alive = 0
+        self._total_created = 0
+        self._total_killed = 0
 
     @property
     def width(self):
@@ -28,11 +32,26 @@ class GameOfLife(object):
     def step_count(self):
         return self._step_count
 
+    @property
+    def alive_count(self):
+        return self._current_alive
+
+    @property
+    def created_count(self):
+        return self._total_created
+
+    @property
+    def killed_count(self):
+        return self._total_killed
+
     def value(self, x, y):
         return self._grid[y, x]
 
     def step(self):
         new_grid = self._grid.copy()
+
+        # Reset current alive counter and recalculate each time
+        self._current_alive = 0
 
         for y in range(self._height):
             for x in range(self._width):
@@ -42,17 +61,22 @@ class GameOfLife(object):
                 # At this iteration, treat these as alive or dead
                 if current == NEW:
                     current = ALIVE
-                    new_grid[y, x] = ALIVE
                 elif current == KILLED:
                     current = DEAD
-                    new_grid[y, x] = DEAD
 
                 if current == ALIVE:
                     if (neighbors < 2) or (neighbors > 3):
-                        new_grid[y, x] = KILLED
+                        current = KILLED
+                        self._total_killed += 1
                 else:
                     if neighbors == 3:
-                        new_grid[y, x] = NEW
+                        current = NEW
+                        self._total_created += 1
+
+                if current == ALIVE or current == NEW:
+                    self._current_alive += 1
+
+                new_grid[y, x] = current
 
         self._step_count += 1
         self._grid[:] = new_grid[:]

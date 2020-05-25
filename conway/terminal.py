@@ -72,7 +72,8 @@ class TerminalView(object):
                             glyph, color)
 
     def _display_status(self):
-        status = 'Step: %d' % self.gol.step_count
+        status = 'Step: %d   Alive: %d   Total Created: %d   Total Killed: %d' % \
+                 (self.gol.step_count, self.gol.alive_count, self.gol.created_count, self.gol.killed_count)
         self._screen.addstr((self.gol.height + self._y_offset + 1), self._x_offset, status)
 
     def _calculate_offsets(self):
