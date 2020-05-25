@@ -115,7 +115,6 @@ class GameOfLife(object):
         return total
 
 
-def random_grid(width, height):
-    grid = numpy.random.choice([ALIVE, DEAD], width * height, p=[0.2, 0.8]).reshape(height, width)
-    gol = GameOfLife(grid)
-    return gol
+def random_grid(width, height, percent_alive):
+    return numpy.random.choice([ALIVE, DEAD], width * height,
+                               p=[percent_alive, (1 - percent_alive)]).reshape(height, width)
