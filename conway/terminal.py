@@ -25,6 +25,7 @@ class TerminalView(object):
         curses.curs_set(0)
 
         self._calculate_offsets()
+        self._flush_terminal()
 
         try:
             self._run_game()
@@ -57,3 +58,10 @@ class TerminalView(object):
 
         self.x_offset = int((num_cols - self.gol.width) / 2) - 1
         self.y_offset = int((num_rows - self.gol.height) / 2) - 1
+
+    def _flush_terminal(self):
+        """Fill the terminal with empty spaces to initialize the canvas"""
+        num_rows, num_cols = self.screen.getmaxyx()
+        for y in range(num_rows - 1):
+            for x in range(num_cols - 1):
+                self.screen.addstr(y, x, ' ', curses.color_pair(1))
