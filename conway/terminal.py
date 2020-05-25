@@ -20,6 +20,8 @@ class TerminalView(object):
         # Color setup
         curses.start_color()
         curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLACK)
+        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_CYAN, curses.COLOR_BLACK)
 
         # General curses settings
         curses.curs_set(0)
@@ -46,12 +48,22 @@ class TerminalView(object):
 
     def _display_glyph(self, x, y):
         z = self.gol.grid[y, x]
-        if z == game.ON:
-            self.screen.addstr(y + self.y_offset, x + self.x_offset,
-                               'o', curses.color_pair(1) | curses.A_BOLD)
+
+        if z == game.ALIVE:
+            glyph = 'o'
+            color = curses.color_pair(1) | curses.A_BOLD
+        elif z == game.NEW:
+            glyph = 'o'
+            color = curses.color_pair(1) | curses.A_BOLD
+        elif z == game.KILLED:
+            glyph = ' '
+            color = curses.color_pair(2)
         else:
-            self.screen.addstr(y + self.y_offset, x + self.x_offset,
-                               ' ')
+            glyph = ' '
+            color = curses.color_pair(1)
+
+        self.screen.addstr(y + self.y_offset, x + self.x_offset,
+                           glyph, color)
 
     def _calculate_offsets(self):
         num_rows, num_cols = self.screen.getmaxyx()
