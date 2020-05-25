@@ -12,14 +12,27 @@ class GameOfLife(object):
         super().__init__()
         self.grid = starting_grid.copy()
 
-        self.width = len(self.grid[0])
-        self.height = len(self.grid)
+        self._width = len(self.grid[0])
+        self._height = len(self.grid)
+        self._step_count = 0
+
+    @property
+    def width(self):
+        return self._width
+
+    @property
+    def height(self):
+        return self._height
+
+    @property
+    def step_count(self):
+        return self.step_count
 
     def step(self):
         new_grid = self.grid.copy()
 
-        for y in range(self.height):
-            for x in range(self.width):
+        for y in range(self._height):
+            for x in range(self._width):
                 neighbors = self._count_neighbors(x, y)
                 current = self.grid[y, x]
 
@@ -38,12 +51,13 @@ class GameOfLife(object):
                     if neighbors == 3:
                         new_grid[y, x] = NEW
 
+        self._step_count += 1
         self.grid[:] = new_grid[:]
 
     def print_grid(self):
-        for y in range(self.height):
+        for y in range(self._height):
             row = ''
-            for x in range(self.width):
+            for x in range(self._width):
                 row += '%d ' % self.grid[y, x]
             print(row)
 
@@ -63,14 +77,14 @@ class GameOfLife(object):
             else:
                 return 0
 
-        total = value_of((y - 1) % self.height, x) + \
-                value_of((y + 1) % self.height, x) + \
-                value_of(y, (x - 1) % self.width) + \
-                value_of(y, (x + 1) % self.width) + \
-                value_of((y - 1) % self.height, (x - 1) % self.width) + \
-                value_of((y + 1) % self.height, (x - 1) % self.width) + \
-                value_of((y - 1) % self.height, (x + 1) % self.width) + \
-                value_of((y + 1) % self.height, (x + 1) % self.width)
+        total = value_of((y - 1) % self._height, x) + \
+                value_of((y + 1) % self._height, x) + \
+                value_of(y, (x - 1) % self._width) + \
+                value_of(y, (x + 1) % self._width) + \
+                value_of((y - 1) % self._height, (x - 1) % self._width) + \
+                value_of((y + 1) % self._height, (x - 1) % self._width) + \
+                value_of((y - 1) % self._height, (x + 1) % self._width) + \
+                value_of((y + 1) % self._height, (x + 1) % self._width)
         return total
 
 
