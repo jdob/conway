@@ -43,7 +43,7 @@ class TerminalView(object):
 
         try:
             self._run_game()
-        except:
+        except KeyboardInterrupt:
             pass
 
         curses.curs_set(1)
@@ -54,9 +54,9 @@ class TerminalView(object):
             for y in range(self.gol.height):
                 for x in range(self.gol.width):
                     self._display_glyph(x, y)
+            self.gol.step()
             self._display_status()
             self._screen.refresh()
-            self.gol.step()
             curses.napms(self.update_interval)
 
     def _display_glyph(self, x, y):
@@ -79,7 +79,7 @@ class TerminalView(object):
                             glyph, color)
 
     def _display_status(self):
-        status = 'Step: %d   Alive: %d   Total Created: %d   Total Killed: %d' % \
+        status = 'Generation: %d   Alive: %d   Total Created: %d   Total Killed: %d' % \
                  (self.gol.step_count, self.gol.alive_count, self.gol.created_count, self.gol.killed_count)
         self._screen.addstr((self.gol.height + self._y_offset + 1), self._x_offset, status)
 

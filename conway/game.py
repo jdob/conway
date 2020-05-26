@@ -19,6 +19,7 @@ class GameOfLife(object):
         self._current_alive = 0
         self._total_created = 0
         self._total_killed = 0
+        self._at_equilibrium = False
 
     @property
     def width(self):
@@ -43,6 +44,10 @@ class GameOfLife(object):
     @property
     def killed_count(self):
         return self._total_killed
+
+    @property
+    def at_equilibrium(self):
+        return self._at_equilibrium
 
     def value(self, x, y):
         return self._grid[y, x]
@@ -79,6 +84,9 @@ class GameOfLife(object):
                 new_grid[y, x] = current
 
         self._step_count += 1
+        if (self._grid == new_grid).all():
+            self._at_equilibrium = True
+
         self._grid[:] = new_grid[:]
 
     def print_grid(self):
