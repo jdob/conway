@@ -16,6 +16,7 @@ def parse_arguments():
     # Terminal Settings
     parser.add_argument('--interval', '-i', dest='update_interval', action='store',
                         help='Interval in ms between steps')
+    parser.add_argument('--no-center', dest='center_in_terminal', action='store_false')
 
     return parser.parse_args()
 
@@ -37,7 +38,8 @@ if __name__ == '__main__':
 
     # Initialize the view
     interval = args.update_interval or 500
-    view = terminal.TerminalView(gol, update_interval=int(interval))
+    center_in_terminal = args.center_in_terminal
+    view = terminal.TerminalView(gol, update_interval=int(interval), center_in_terminal=center_in_terminal)
 
     # Start the simulation
     view.run()

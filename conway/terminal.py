@@ -9,6 +9,7 @@ FULL_SCREEN_HEIGHT_PADDING = 4
 class TerminalView(object):
 
     def __init__(self, gol, update_interval=500,
+                 center_in_terminal=True,
                  alive_glyph=None, new_glyph=None,
                  dead_glyph=None, killed_glyph=None) -> None:
         super().__init__()
@@ -16,6 +17,7 @@ class TerminalView(object):
         self.update_interval = update_interval
 
         self._screen = None
+        self._center_in_terminal = center_in_terminal
         self._x_offset = 0
         self._y_offset = 0
 
@@ -54,7 +56,9 @@ class TerminalView(object):
             for y in range(self.gol.height):
                 for x in range(self.gol.width):
                     self._display_glyph(x, y)
-            self.gol.step()
+
+            if not self.gol.at_equilibrium:
+                self.gol.step()
             self._display_status()
             self._screen.refresh()
             curses.napms(self.update_interval)
@@ -86,9 +90,10 @@ class TerminalView(object):
         s_alive = 'Alive: %d  ' % self.gol.alive_count
         s_created = 'Created: %d  ' % self.gol.created_count
         s_killed = 'Killed: %d  ' % self.gol.killed_count
+        s_eq = 'Equilibrium Reached  ' if self.gol.at_equilibrium else ''
 
         all_lines = ['']
-        for i in [s_gen, s_alive, s_created, s_killed]:
+        for i in [s_eq, s_gen, s_alive, s_created, s_killed]:
             if (len(i) + len(all_lines[-1:][0])) <= self.gol.width:
                 add_to_me = all_lines.pop(-1) + i
                 all_lines.append(add_to_me)
@@ -99,6 +104,10 @@ class TerminalView(object):
             self._screen.addstr((self.gol.height + self._y_offset + n + 1), self._x_offset, i)
 
     def _calculate_offsets(self):
+
+        if not self._center_in_terminal:
+            return
+
         num_rows, num_cols = self._screen.getmaxyx()
 
         self._x_offset = int((num_cols - self.gol.width) / 2) - 1
