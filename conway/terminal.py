@@ -8,7 +8,9 @@ FULL_SCREEN_HEIGHT_PADDING = 4
 
 class TerminalView(object):
 
-    def __init__(self, gol, update_interval=500) -> None:
+    def __init__(self, gol, update_interval=500,
+                 alive_glyph=None, new_glyph=None,
+                 dead_glyph=None, killed_glyph=None) -> None:
         super().__init__()
         self.gol = gol
         self.update_interval = update_interval
@@ -16,6 +18,11 @@ class TerminalView(object):
         self._screen = None
         self._x_offset = 0
         self._y_offset = 0
+
+        self._alive_glyph = alive_glyph or '●'
+        self._new_gyph = new_glyph or '●'
+        self._dead_glyph = dead_glyph or ' '
+        self._killed_glyph = killed_glyph or ' '
 
     def run(self):
         self._screen = curses.initscr()
@@ -56,16 +63,16 @@ class TerminalView(object):
         z = self.gol.value(x, y)
 
         if z == game.ALIVE:
-            glyph = 'o'
+            glyph = self._alive_glyph
             color = curses.color_pair(1) | curses.A_BOLD
         elif z == game.NEW:
-            glyph = 'o'
+            glyph = self._new_gyph
             color = curses.color_pair(1) | curses.A_BOLD
         elif z == game.KILLED:
-            glyph = ' '
+            glyph = self._killed_glyph
             color = curses.color_pair(2)
         else:
-            glyph = ' '
+            glyph = self._dead_glyph
             color = curses.color_pair(1)
 
         self._screen.addstr(y + self._y_offset, x + self._x_offset,
