@@ -90,14 +90,23 @@ class TerminalView(object):
         s_alive = 'Alive: %d  ' % self.gol.alive_count
         s_created = 'Created: %d  ' % self.gol.created_count
         s_killed = 'Killed: %d  ' % self.gol.killed_count
+        s_sup = 'Alive Min/Max: %d/%d  ' % (self.gol.min_alive, self.gol.max_alive)
         s_eq = 'Equilibrium Reached  ' if self.gol.at_equilibrium else ''
 
         all_lines = ['']
-        for i in [s_eq, s_gen, s_alive, s_created, s_killed]:
+        for i in [s_eq, s_gen, s_alive, s_created, s_killed, s_sup]:
             if (len(i) + len(all_lines[-1:][0])) <= self.gol.width:
+                # The new status item fits
                 add_to_me = all_lines.pop(-1) + i
                 all_lines.append(add_to_me)
             else:
+                # The new status item doesn't fit, so append spaces to the previous
+                # item in case there was old stuff there
+                add_to_me = all_lines.pop(-1)
+                add_to_me = add_to_me + ' ' * (self.gol.width - len(add_to_me))
+                all_lines.append(add_to_me)
+
+                # Add the new status item
                 all_lines.append(i)
 
         for n, i in enumerate(all_lines):

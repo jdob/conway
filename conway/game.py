@@ -1,4 +1,6 @@
 import numpy
+import sys
+
 
 ALIVE = 1
 DEAD = 0
@@ -17,6 +19,8 @@ class GameOfLife(object):
 
         self._step_count = 0
         self._current_alive = 0
+        self._max_alive = 0
+        self._min_alive = sys.maxsize
         self._total_created = 0
         self._total_killed = 0
         self._at_equilibrium = False
@@ -44,6 +48,14 @@ class GameOfLife(object):
     @property
     def killed_count(self):
         return self._total_killed
+
+    @property
+    def max_alive(self):
+        return self._max_alive
+
+    @property
+    def min_alive(self):
+        return self._min_alive
 
     @property
     def at_equilibrium(self):
@@ -84,9 +96,16 @@ class GameOfLife(object):
                 new_grid[y, x] = current
 
         self._step_count += 1
+
+        # Equilibrium check
         if (self._grid == new_grid).all():
             self._at_equilibrium = True
 
+        # Stats updating
+        self._max_alive = max(self._max_alive, self._current_alive)
+        self._min_alive = min(self._min_alive, self._current_alive)
+
+        # Replace the old grid with the grid from this iteration
         self._grid[:] = new_grid[:]
 
     def print_grid(self):
