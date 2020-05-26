@@ -81,7 +81,22 @@ class TerminalView(object):
     def _display_status(self):
         status = 'Generation: %d   Alive: %d   Total Created: %d   Total Killed: %d' % \
                  (self.gol.step_count, self.gol.alive_count, self.gol.created_count, self.gol.killed_count)
-        self._screen.addstr((self.gol.height + self._y_offset + 1), self._x_offset, status)
+
+        s_gen = 'Generation: %d  ' % self.gol.step_count
+        s_alive = 'Alive: %d  ' % self.gol.alive_count
+        s_created = 'Created: %d  ' % self.gol.created_count
+        s_killed = 'Killed: %d  ' % self.gol.killed_count
+
+        all_lines = ['']
+        for i in [s_gen, s_alive, s_created, s_killed]:
+            if (len(i) + len(all_lines[-1:][0])) <= self.gol.width:
+                add_to_me = all_lines.pop(-1) + i
+                all_lines.append(add_to_me)
+            else:
+                all_lines.append(i)
+
+        for n, i in enumerate(all_lines):
+            self._screen.addstr((self.gol.height + self._y_offset + n + 1), self._x_offset, i)
 
     def _calculate_offsets(self):
         num_rows, num_cols = self._screen.getmaxyx()

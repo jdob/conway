@@ -25,8 +25,8 @@ if __name__ == '__main__':
     args = parse_arguments()
 
     # Initialize the game
-    width = args.width or 20
-    height = args.height or 20
+    width = args.width or 78
+    height = args.height or 40
     percent_alive = args.percent_alive or .2
 
     if args.fullscreen:
