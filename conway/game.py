@@ -68,6 +68,7 @@ class GameOfLife(object):
         new_grid = self._grid.copy()
 
         # Reset current alive counter and recalculate each time
+        previous_alive = self._current_alive
         self._current_alive = 0
 
         for y in range(self._height):
@@ -98,7 +99,7 @@ class GameOfLife(object):
         self._step_count += 1
 
         # Equilibrium check
-        if (self._grid == new_grid).all():
+        if (previous_alive == self._current_alive) and (self._grid == new_grid).all():
             self._at_equilibrium = True
 
         # Stats updating
